@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "labyrinthine",
+  "version": "${version}",
+
+  "name": "Labyrinthine",
+  "description": "What could you find in the labyrinths?",
+  "authors": [
+    "FoundationGames",
+	"Yaku"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/FoundationGames/Labyrinthine"
+  },
+
+  "license": "MIT",
+  "icon": "assets/labyrinthine/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.foundationgames.labyrinthine.Labyrinthine"
+    ]
+  },
+  "mixins": [
+    "labyrinthine.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

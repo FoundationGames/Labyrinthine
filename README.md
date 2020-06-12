@@ -1,0 +1,3 @@
+# Labyrinthine
+## A Modfest 1.16 mod
+This mod adds strange labyrinths to your game, but be aware that only the shaprest of minds can escape them safely...
