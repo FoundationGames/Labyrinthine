@@ -4,6 +4,11 @@
   "package": "io.github.foundationgames.labyrinthine.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "SpawnEggItemMixin",
+    "ExplosionMixin",
+    "MobSpawnerLogicAccessor",
+    "StructureFeatureAccessor",
+    "FlatChunkGeneratorConfigAccessor"
   ],
   "client": [
   ],

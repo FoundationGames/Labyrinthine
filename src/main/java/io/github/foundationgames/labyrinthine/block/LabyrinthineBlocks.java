@@ -1,6 +1,9 @@
 package io.github.foundationgames.labyrinthine.block;
 
 import io.github.foundationgames.labyrinthine.Labyrinthine;
+import io.github.foundationgames.labyrinthine.block.entity.DungeonSpawnerBlockEntity;
+import io.github.foundationgames.labyrinthine.block.entity.MobSpawnBlockEntity;
+import io.github.foundationgames.labyrinthine.block.entity.PrismBlockEntity;
 import io.github.foundationgames.labyrinthine.item.LabyrinthineBlockItem;
 import io.github.foundationgames.labyrinthine.util.Utilz;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -8,46 +11,36 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
 public class LabyrinthineBlocks {
 
-// Ignore the slashes like they don't exist
+    public static final Block DUNGEON_PORTAL = registerBlockOnly("dungeon_portal", new DungeonPortalBlock(FabricBlockSettings.of(Material.PORTAL, MaterialColor.GOLD).strength(-1.0F, 3600000.0F).dropsNothing().lightLevel(10).nonOpaque().noCollision()));
+    public static final Block ENTRANCE_FRAME = register("entrance_frame", Labyrinthine.LABYRINTHINE_ITEMS, new EntranceFrameBlock(FabricBlockSettings.copy(Blocks.BEDROCK).lightLevel((state) -> state.get(EntranceFrameBlock.ACTIVE) ? 5 : 0)));
+    public static final Block EXIT_PLATFORM = register("exit_platform", Labyrinthine.LABYRINTHINE_ITEMS, new ConfigurableBlock(FabricBlockSettings.copy(Blocks.BEDROCK).lightLevel((state) -> 2)));
+    public static final Block FUNGLOW = register("funglow", Labyrinthine.LABYRINTHINE_ITEMS, new FunglowBlock(FabricBlockSettings.copy(Blocks.WARPED_FUNGUS).emissiveLighting((state, world, pos) -> true)));
+    public static final Block TAINTED_STONE_BRICKS = register("tainted_stone_bricks", Labyrinthine.LABYRINTHINE_ITEMS, new ConfigurableBlock(FabricBlockSettings.copy(Blocks.MOSSY_STONE_BRICKS)));
+    public static final Block TAINTED_STONE_BRICK_STAIRS = register("tainted_stone_brick_stairs", Labyrinthine.LABYRINTHINE_ITEMS, new Utilz.StairBlock(TAINTED_STONE_BRICKS.getDefaultState(), FabricBlockSettings.copy(Blocks.STONE_BRICK_STAIRS)));
+    public static final Block FUNGLOWING_STONE_BRICKS = register("funglowing_stone_bricks", Labyrinthine.LABYRINTHINE_ITEMS, new ConfigurableBlock(FabricBlockSettings.copy(Blocks.MOSSY_STONE_BRICKS)));
+    public static final Block FUNGLOWING_STONE_BRICK_STAIRS = register("funglowing_stone_brick_stairs", Labyrinthine.LABYRINTHINE_ITEMS, new Utilz.StairBlock(FUNGLOWING_STONE_BRICKS.getDefaultState(), FabricBlockSettings.copy(Blocks.STONE_BRICK_STAIRS)));
+    public static final Block FUNGLOWING_CHISELED_STONE_BRICKS = register("funglowing_chiseled_stone_bricks", Labyrinthine.LABYRINTHINE_ITEMS, new ConfigurableBlock(FabricBlockSettings.copy(Blocks.MOSSY_STONE_BRICKS)));
+    public static final Block DUNGEON_SPAWNER = register("dungeon_spawner", Labyrinthine.LABYRINTHINE_ITEMS, new DungeonSpawnerBlock(FabricBlockSettings.copy(Blocks.SPAWNER).strength(-1.0F, 3600000.0F)));
+    public static final Block MOB_SPAWN = register("mob_spawn", new MobSpawnBlock(FabricBlockSettings.copy(Blocks.SKELETON_SKULL).strength(-1.0F, 3600000.0F)));
+    public static final Block PRISM = new PrismBlock(FabricBlockSettings.copy(Blocks.IRON_BARS)); //UNUSED
+    public static final Block COIN_STACK = register("coin_stack", Labyrinthine.LABYRINTHINE_ITEMS, new CoinStackBlock(FabricBlockSettings.copy(Blocks.WHITE_WOOL).strength(0.03f, 0.2f).sounds(BlockSoundGroup.CHAIN)));
+    public static final Block SPELL_BINDER = register("spell_binder", new SpellBinderBlock(FabricBlockSettings.copy(DUNGEON_SPAWNER)));
 
-//  HOW TO ADD A BLOCK!!!!!!
-//  Write this code below all this gray text:
+    public static final BlockEntityType<DungeonSpawnerBlockEntity> DUNGEON_SPAWNER_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, Utilz.id("dungeon_spawner"), BlockEntityType.Builder.create(DungeonSpawnerBlockEntity::new, DUNGEON_SPAWNER).build(null));
+    public static final BlockEntityType<MobSpawnBlockEntity> MOB_SPAWN_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, Utilz.id("mob_spawn"), BlockEntityType.Builder.create(MobSpawnBlockEntity::new, MOB_SPAWN).build(null));
+    public static final BlockEntityType<PrismBlockEntity> PRISM_ENTITY = Registry.register(Registry.BLOCK_ENTITY_TYPE, Utilz.id("prism"), BlockEntityType.Builder.create(PrismBlockEntity::new, PRISM).build(null));
 
-//  public static final Block MY_BLOCK = register("my_block", Labyrinthine.LABYRINTHINE_ITEMS, new Block(<settings>));
-
-//  public static final Block MY_BLOCK = registerBlockOnly("my_block", new Block(<settings>));
-
-//  TOP ONE IS FOR NORMAL BLOCKS, BOTTOM IS FOR IF YOU DONT WANT IT TO HAVE AN ITEM VERSION (LIKE FIRE) YOU PROBABLY WANT TO USE THE TOP ONE
-//  Replace MY_BLOCK with your block name (all caps, with underscores, ex: STONE_BRICKS)
-//  Replace "my_block" with your block id , ex: "stone_bricks"
-//  Replace <settings> with some block settings!
-//  SETTINGS: How to make a block settings
-//  WHAT IS A SETTINGS? It sets the hardness, blast res, light, and various other things
-
-//  METHOD 1: copy the settings of a vanilla block. Replace <settings> with:
-//  FabricBlockSettings.copy(Blocks.STONE)
-//  Replace STONE with a valid vanilla block, it will copy the settings!
-
-//  METHOD 2 (Harder but more customize): make your own block settings!!!! replace <settings> with:
-//  FabricBlockSettings.of(Material.BAMBOO, MaterialColor.BLACK).hardness(4.20f).resistance(69.0f).lightLevel(15)
-//  If you want to see all the different Materials and MaterialColors, Just type Material. or MaterialColor. and an autocomplete list will pop up
-//  Because there is so much options, just type: FabricBlockSettings.of(Material.<le material>, MaterialColor.<le colour>).   and there should be an autocomplete list! (please replace le material and le colour with valid things)
-//  Textures/models/name is done in resource pack
-
-    //DM me if confuse
-
-    //EXAMPLE: Tainted stone!!!
-    public static final Block TAINTED_STONE = register("tainted_stone", Labyrinthine.LABYRINTHINE_ITEMS, new Block(FabricBlockSettings.copy(Blocks.STONE)));
-
-    //Add more blocks below this line of text! vvv
-
-    //Ignore
     public static void init() {
     }
     public static Block registerBlockOnly(String id, Block block) {
@@ -55,6 +48,10 @@ public class LabyrinthineBlocks {
     }
     public static Block register(String id, ItemGroup group, Block block) {
         Registry.register(Registry.ITEM, Utilz.id(id), new LabyrinthineBlockItem(block, new Item.Settings().group(group)));
+        return registerBlockOnly(id, block);
+    }
+    public static Block register(String id, Block block) {
+        Registry.register(Registry.ITEM, Utilz.id(id), new LabyrinthineBlockItem(block, new Item.Settings()));
         return registerBlockOnly(id, block);
     }
 }
