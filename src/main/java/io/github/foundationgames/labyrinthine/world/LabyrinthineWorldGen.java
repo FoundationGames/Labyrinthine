@@ -3,6 +3,7 @@ package io.github.foundationgames.labyrinthine.world;
 import com.mojang.brigadier.CommandDispatcher;
 import io.github.foundationgames.labyrinthine.block.LabyrinthineBlocks;
 import io.github.foundationgames.labyrinthine.event.LabyrinthCompletedPersistentState;
+import io.github.foundationgames.labyrinthine.event.LabyrinthSpawnPersistentState;
 import io.github.foundationgames.labyrinthine.mixin.FlatChunkGeneratorConfigAccessor;
 import io.github.foundationgames.labyrinthine.mixin.StructureFeatureAccessor;
 import io.github.foundationgames.labyrinthine.util.Mathz;
@@ -53,7 +54,15 @@ public class LabyrinthineWorldGen {
     public static BlockPattern.TeleportTarget placeEntityOnExitPlatformOrSpawn(Entity teleported, ServerWorld dimension, Direction portalDir, double horizontalOffset, double verticalOffset) {
         if (dimension.getRegistryKey() == LabyrinthineWorldGen.DUNGEON_REALM_KEY) {
             if (teleported != null) {
-                BlockPos result = Utilz.searchForBlock2dOrDefault(teleported.getBlockPos(), LabyrinthineBlocks.EXIT_PLATFORM.getDefaultState(), dimension, new BlockPos(0, 75, 0), 212);
+                BlockPos result;
+                LabyrinthSpawnPersistentState pstate = dimension.getPersistentStateManager().getOrCreate(() -> new LabyrinthSpawnPersistentState("labyrinthSpawn"), "labyrinthSpawn");
+                if(pstate.spawnPos == null) {
+                    result = Utilz.searchForBlock2dOrDefault(teleported.getBlockPos(), LabyrinthineBlocks.EXIT_PLATFORM.getDefaultState(), dimension, new BlockPos(0, 75, 0), 212);
+                    pstate.spawnPos = result;
+                    pstate.setDirty(true);
+                } else {
+                    result = pstate.spawnPos;
+                }
                 return new BlockPattern.TeleportTarget(Mathz.bp2v3d(result.up()).add(0.5, 0, 0.5), teleported.getVelocity(), (int)teleported.yaw);
             }
             return new BlockPattern.TeleportTarget(new Vec3d(0, 0, 0), new Vec3d(0, 0, 0), 0);
