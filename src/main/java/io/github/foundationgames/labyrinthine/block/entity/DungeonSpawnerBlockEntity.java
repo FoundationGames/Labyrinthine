@@ -54,7 +54,7 @@ public class DungeonSpawnerBlockEntity extends BlockEntity implements Tickable, 
         @Override
         public void setSpawnEntry(MobSpawnerEntry spawnEntry) {
             super.setSpawnEntry(spawnEntry);
-            if (this.getWorld() != null) {
+            if (this.getWorld() != null && this.getWorld().isClient) {
                 updateRender(this);
             }
         }
@@ -139,7 +139,7 @@ public class DungeonSpawnerBlockEntity extends BlockEntity implements Tickable, 
 
     public void updateEntity(EntityType<?> entityType) {
         this.logic.setEntityId(entityType);
-        updateRender(logic);
+        if(world.isClient) updateRender(logic);
     }
 
     private void updateRender(MobSpawnerLogic spawnerLogic) {
